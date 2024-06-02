@@ -109,8 +109,22 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	encodedKey := hex.EncodeToString(key)
-	url := fmt.Sprintf("/download/%s?key=%s", id, encodedKey)
-	fmt.Fprintf(w, "File uploaded successfully. Download URL: %s", url)
+
+	type UploadResponse struct {
+		ID  string `json:"id"`
+		Key string `json:"key"`
+	}
+
+	response := UploadResponse{
+		ID:  id,
+		Key: encodedKey,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		handleError(w, fmt.Errorf("error encoding response: %v", err), http.StatusInternalServerError)
+		return
+	}
 }
 
 func handleDownload(w http.ResponseWriter, r *http.Request) {
