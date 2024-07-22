@@ -1,0 +1,134 @@
+@font-face {
+    font-family: Poppins-Light ;
+    src: url(Poppins-Light.ttf);
+}
+
+@font-face {
+    font-family: Poppins-Medium;
+    src: url(Poppins-Medium.ttf);
+}
+*{
+    margin: 0px;
+}
+#navbar{
+    width: 2000px;
+    height: 100px;
+     background-color: #5bc703;
+    margin-top: 0px;
+ 
+ }
+h1{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color:  rgb(253, 253, 253);
+    font-size: 50px;
+    margin-left: 50px;
+    margin-top: -80px;
+}
+body{
+background-color: #383836;
+
+}
+
+#main{
+    background-color: #5bc703;
+    height: 400px;
+    width: 800px;
+    padding: 100px;
+    margin-left: 400px;
+    margin-top: 5%;
+    border-radius: 30px;
+    border: 4px dashed white;
+}
+
+#undiv1{
+    height: 200px;
+    width: 500px;
+    padding: 50px;
+    margin-left: 10px;
+}
+#undiv2{
+   
+    height: 200px;
+    width: 600px;
+    padding: 20px;
+    margin-left: 70px;
+    margin-top: -70px;
+}
+
+#idInput{
+    font-size: 30px;
+    font-family: Poppins-Medium;
+    background-color: #f3f5f7;
+    border-radius: 10px;
+    border-color: #294F6A;
+}
+#lab1{
+ font-size: 30px;
+ color: white;
+}
+#keyInput{
+    font-size: 30px;
+    font-family: Poppins-Medium;
+    background-color: #f7f9fa;
+    border-radius: 10px;
+    border-color: #294F6A;
+}
+#lab2{
+    font-size: 30px;
+    color: white;
+   }
+
+#btn1{
+
+    font-size: 20px;
+    border-radius: 10px;
+    padding: 10px 10px 10px 10px;
+    cursor: pointer;
+    background-color: #294F6A;
+    border-color: #294F6A;
+    margin-left: 100px;
+    
+}
+
+#link{
+
+    color: antiquewhite;
+    text-decoration: solid;
+}
+#btn2{
+
+    font-size: 20px;
+    border-radius: 10px;
+    padding: 10px 10px 10px 10px;
+    cursor: pointer;
+    background-color: #294F6A;
+    border-color: #294F6A;
+    margin-left: -30px;
+    color: antiquewhite;
+}
+
+#fileInfo{
+    color: #5bc703;
+    height: 150px;
+    width: 800px;
+    background-color: #ffffff;
+    margin-top: 100px;
+    border-radius: 20px;
+    justify-content: center;
+    border: 3px dashed #5bc703;
+    font-size: 30px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    text-align: left;
+    padding: 40px 40px 40px 40px;
+    display: none;
+
+
+}
+#footer{
+    height: 100px;
+    background-color: #5bc703;
+    margin-top: 20%;
+    text-align: center;
+    color: rgb(247, 245, 242);
+    padding: 40px 40px 40px 40px;
+}

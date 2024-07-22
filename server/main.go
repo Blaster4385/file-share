@@ -6,6 +6,7 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"database/sql"
+	"embed"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -26,7 +27,16 @@ const (
 
 var db *sql.DB
 
+//go:embed all:dist
+var dist embed.FS
+
 func registerHandlers(e *echo.Echo) {
+	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
+		Root:       "dist",
+		Index:      "upload.html",
+		HTML5:      true,
+		Filesystem: http.FS(dist),
+	}))
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
