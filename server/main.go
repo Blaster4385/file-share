@@ -34,7 +34,7 @@ func registerHandlers(e *echo.Echo) {
 	e.Use(middleware.BodyLimit(fmt.Sprintf("%dM", maxUploadSize/(1024*1024))))
 	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 		Root:       "dist",
-		Index:      "upload.html",
+		Index:      "index.html",
 		HTML5:      true,
 		Filesystem: http.FS(dist),
 	}))
