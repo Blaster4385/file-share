@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	maxUploadSize = 10 * 1024 * 1024 // 10 MB
+	maxUploadSize = 3 * 1024 * 1024 * 1024 // 3 GB
 	keySize       = 32
 	nonceSize     = 12
 )
@@ -31,6 +31,7 @@ var db *sql.DB
 var dist embed.FS
 
 func registerHandlers(e *echo.Echo) {
+	e.Use(middleware.BodyLimit(fmt.Sprintf("%dM", maxUploadSize/(1024*1024))))
 	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 		Root:       "dist",
 		Index:      "upload.html",
