@@ -9,9 +9,11 @@ import (
 	"embed"
 	"encoding/hex"
 	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -26,6 +28,8 @@ const (
 )
 
 var db *sql.DB
+
+var port string
 
 //go:embed all:dist
 var dist embed.FS
@@ -47,6 +51,8 @@ func registerHandlers(e *echo.Echo) {
 }
 
 func main() {
+	flag.StringVar(&port, "port", "8080", "HTTP server port")
+	flag.Parse()
 	var err error
 	db, err = initDB()
 	if err != nil {
@@ -56,11 +62,18 @@ func main() {
 
 	e := echo.New()
 	registerHandlers(e)
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":" + port))
 }
 
 func initDB() (*sql.DB, error) {
-	db, err := sql.Open("postgres", "postgres://file:password@localhost/filedb?sslmode=disable")
+	user := os.Getenv("POSTGRES_USER")
+	password := os.Getenv("POSTGRES_PASSWORD")
+	dbname := os.Getenv("POSTGRES_DB")
+
+	dbURL := fmt.Sprintf("postgres://%s:%s@localhost/%s?sslmode=disable", user, password, dbname)
+	// print dbURL for debugging
+	fmt.Println(dbURL)
+	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		return nil, err
 	}
