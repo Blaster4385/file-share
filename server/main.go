@@ -392,6 +392,7 @@ func startCleanupScheduler() {
 	go func() {
 		for range ticker.C {
 			cleanupChunks()
+			cleanupOldFiles()
 		}
 	}()
 }
@@ -403,5 +404,15 @@ func cleanupChunks() {
 	_, err := db.ExecContext(ctx, "DELETE FROM chunks WHERE created_at < NOW() - INTERVAL '1 day'")
 	if err != nil {
 		fmt.Printf("error cleaning up chunks: %v\n", err)
+	}
+}
+
+func cleanupOldFiles() {
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
+	defer cancel()
+
+	_, err := db.ExecContext(ctx, "DELETE FROM files WHERE created_at < NOW() - INTERVAL '1 day'")
+	if err != nil {
+		fmt.Printf("error cleaning up old files: %v\n", err)
 	}
 }
