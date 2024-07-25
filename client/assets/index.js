@@ -86,6 +86,7 @@ function setupUploadForm() {
 
         uploadButton.style.display = 'none';
         progressBar.style.display = 'block';
+        fileInput.disabled = true;
 
         try {
             await uploadFileInChunks(file, progressFill);
@@ -96,6 +97,7 @@ function setupUploadForm() {
         } finally {
             progressBar.style.display = 'none';
             uploadButton.style.display = 'inline-block';
+            fileInput.disabled = false;
         }
     });
 }
