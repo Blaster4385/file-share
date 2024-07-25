@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 const baseUrl = window.location.origin;
+const CHUNK_SIZE = 100* 1024 * 1024; // 100 MB
 
 async function displayFileDetails(fileId, key) {
     try {
@@ -79,39 +80,63 @@ function setupUploadForm() {
             return;
         }
 
-        const formData = new FormData();
-        formData.append('file', file);
-
         try {
-            const response = await fetch(`${baseUrl}/upload`, {
-                method: 'POST',
-                body: formData
-            });
-
-            const uploadResult = document.getElementById('upload__result');
-
-            if (!response.ok) {
-                uploadResult.textContent = `Error: ${response.statusText}`;
-                uploadResult.classList.add('upload__result__visible');
-                return;
-            }
-
-            const contentType = response.headers.get('Content-Type');
-            
-            if (contentType && contentType.includes('application/json')) {
-                const result = await response.json();
-                const pageUrl = `${baseUrl}/?id=${result.id}&key=${result.key}`;
-                window.location.href = pageUrl;
-            } else {
-                const result = await response.text();
-                uploadResult.textContent = result;
-            }
-
-            uploadResult.classList.add('upload__result__visible');
+            await uploadFileInChunks(file);
         } catch (error) {
             console.error('Error:', error);
             document.getElementById('upload__result').textContent = 'An error occurred. Please try again.';
             document.getElementById('upload__result').classList.add('upload__result__visible');
         }
     });
+}
+
+async function uploadFileInChunks(file) {
+    const fileSize = file.size;
+    const chunkCount = Math.ceil(fileSize / CHUNK_SIZE);
+    const uploadId = generateUploadId();
+
+    for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
+        const start = chunkIndex * CHUNK_SIZE;
+        const end = Math.min(start + CHUNK_SIZE, fileSize);
+        const chunk = file.slice(start, end);
+
+        const formData = new FormData();
+        formData.append('chunk', chunk);
+        formData.append('uploadId', uploadId);
+        formData.append('chunkIndex', chunkIndex);
+        formData.append('chunkCount', chunkCount);
+        formData.append('fileName', file.name);
+
+        const response = await fetch(`${baseUrl}/upload_chunk`, {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error uploading chunk ${chunkIndex}: ${response.statusText}`);
+        }
+    }
+
+    // Call upload_complete endpoint
+    const completeFormData = new FormData();
+    completeFormData.append('uploadId', uploadId);
+    completeFormData.append('chunkCount', chunkCount);
+    completeFormData.append('fileName', file.name);
+
+    const completeResponse = await fetch(`${baseUrl}/upload_complete`, {
+        method: 'POST',
+        body: completeFormData,
+    });
+
+    if (!completeResponse.ok) {
+        throw new Error(`Error completing upload: ${completeResponse.statusText}`);
+    }
+
+    const result = await completeResponse.json();
+    const pageUrl = `${baseUrl}/?id=${result.id}&key=${result.key}`;
+    window.location.href = pageUrl;
+}
+
+function generateUploadId() {
+    return Math.random().toString(36).substr(2, 9);
 }
