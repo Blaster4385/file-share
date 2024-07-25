@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 const baseUrl = window.location.origin;
-const CHUNK_SIZE = 100* 1024 * 1024; // 100 MB
+const CHUNK_SIZE = 100 * 1024 * 1024; // 100 MB
 
 async function displayFileDetails(fileId, key) {
     try {
@@ -80,20 +80,31 @@ function setupUploadForm() {
             return;
         }
 
+        const progressBar = document.getElementById('upload__progress');
+        const progressFill = document.getElementById('progress__fill');
+        const uploadButton = document.getElementById('upload__btn');
+
+        uploadButton.style.display = 'none';
+        progressBar.style.display = 'block';
+
         try {
-            await uploadFileInChunks(file);
+            await uploadFileInChunks(file, progressFill);
         } catch (error) {
             console.error('Error:', error);
             document.getElementById('upload__result').textContent = 'An error occurred. Please try again.';
             document.getElementById('upload__result').classList.add('upload__result__visible');
+        } finally {
+            progressBar.style.display = 'none';
+            uploadButton.style.display = 'inline-block';
         }
     });
 }
 
-async function uploadFileInChunks(file) {
+async function uploadFileInChunks(file, progressFill) {
     const fileSize = file.size;
     const chunkCount = Math.ceil(fileSize / CHUNK_SIZE);
     const uploadId = generateUploadId();
+    let uploadedSize = 0;
 
     for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
         const start = chunkIndex * CHUNK_SIZE;
@@ -115,6 +126,10 @@ async function uploadFileInChunks(file) {
         if (!response.ok) {
             throw new Error(`Error uploading chunk ${chunkIndex}: ${response.statusText}`);
         }
+
+        uploadedSize += chunk.size;
+        const progress = Math.round((uploadedSize / fileSize) * 100);
+        progressFill.style.width = `${progress}%`;
     }
 
     // Call upload_complete endpoint

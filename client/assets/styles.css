@@ -110,6 +110,24 @@ body {
     opacity: 1;
 }
 
+.upload__progress {
+    width: 90%;
+    height: 20px;
+    background-color: #a89984;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 1rem;
+    position: absolute;
+    bottom: 5%;
+}
+
+.upload__progress__fill {
+    height: 100%;
+    width: 0;
+    background-color: #504945;
+    transition: width 0.2s ease-in-out;
+}
+
 a {
     text-decoration: none;
     color: inherit;
