@@ -120,18 +120,9 @@ async function uploadFileInChunks(file, progressFill) {
         formData.append('chunkCount', chunkCount);
         formData.append('fileName', file.name);
 
-        const response = await fetch(`${baseUrl}/upload_chunk`, {
-            method: 'POST',
-            body: formData,
-        });
-
-        if (!response.ok) {
-            throw new Error(`Error uploading chunk ${chunkIndex}: ${response.statusText}`);
-        }
+        await uploadChunk(formData, progressFill, uploadedSize, fileSize);
 
         uploadedSize += chunk.size;
-        const progress = Math.round((uploadedSize / fileSize) * 100);
-        progressFill.style.width = `${progress}%`;
     }
 
     // Call upload_complete endpoint
@@ -152,6 +143,33 @@ async function uploadFileInChunks(file, progressFill) {
     const result = await completeResponse.json();
     const pageUrl = `${baseUrl}/?id=${result.id}&key=${result.key}`;
     window.location.href = pageUrl;
+}
+
+async function uploadChunk(formData, progressFill, uploadedSize, fileSize) {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `${baseUrl}/upload_chunk`, true);
+
+        xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable) {
+                const totalUploaded = uploadedSize + event.loaded;
+                const progress = Math.round((totalUploaded / fileSize) * 100);
+                progressFill.style.width = `${progress}%`;
+            }
+        };
+
+        xhr.onload = () => {
+            if (xhr.status === 200) {
+                resolve();
+            } else {
+                reject(new Error(`Error uploading chunk: ${xhr.statusText}`));
+            }
+        };
+
+        xhr.onerror = () => reject(new Error('Network error occurred'));
+
+        xhr.send(formData);
+    });
 }
 
 function generateUploadId() {
