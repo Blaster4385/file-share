@@ -71,6 +71,11 @@ body {
   bottom: 5%;
 }
 
+.upload__info {
+  font-size: 0.8rem;
+  color: #454545;
+}
+
 .upload__input {
   color: #282828;
   border: 2px solid #282828;
@@ -99,6 +104,10 @@ body {
   border-radius: 0.5rem;
   min-height: 300px;
   min-width: 300px;
+}
+
+.upload__input__overlay__text {
+  text-align: center;
 }
 
 .upload__result {
@@ -148,6 +157,14 @@ a {
     min-width: 250px;
     max-width: 250px;
     padding: 0.5rem;
+  }
+
+  .upload__input__overlay__text {
+    font-size: 0.8rem;
+  }
+
+  .upload__info {
+    font-size: 0.6rem;
   }
 
   .upload__button,
